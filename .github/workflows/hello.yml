@@ -1,11 +1,22 @@
-name : First Workflows
+name: multiple steps
 
 on:
   push:
 
 jobs:
-  hello:
-    runs-on: ubuntu-latest
-    steps:
-      - name: print message
-        run: echo "Hello World"
+  demo:
+
+    runs-on: uubuntu-latest 
+
+    steps: 
+      - name: step1
+        run: echo "starting"
+
+      - name: step2
+        run: pwd
+
+      - name: step3
+        run: ls
+
+      - name: step4
+        run: echo "completed"
