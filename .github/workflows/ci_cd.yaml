@@ -15,6 +15,9 @@ jobs:
 
       - name: Java Setup
         uses: actions/setup-java@v4
+        with:
+              distribution: 'temurin'
+              java-version: '17'
 
       - name: dependencies
         run: mvn dependency:resolve
@@ -22,10 +25,10 @@ jobs:
       - name: compile and run tests
         run: mvn clean test package
 
-      - name: generate artifacts
+      - name: generate-artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: build artifacts
+          name: build-artifacts
           path: |
-                target-*.jar
-                target-*.war
+                target/*.jar
+                target/*.war
