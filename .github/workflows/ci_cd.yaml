@@ -6,29 +6,43 @@ on:
         - main
 
 jobs:
-  build:
+  test:
+    name: Test on Java ${{ matrix.java }}
     runs-on: ubuntu-latest 
 
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [11, 17, 21]
+        
     steps: 
       - name: repository
         uses: actions/checkout@v4
 
-      - name: Java Setup
+      - name: Java Setup ${{ matrix.java }}
         uses: actions/setup-java@v4
         with:
               distribution: 'temurin'
-              java-version: '17'
+              java-version: ${{ matrix.java }}
 
       - name: dependencies
         run: mvn dependency:resolve
 
       - name: compile and run tests
-        run: mvn clean test package
+        run: mvn clean test -B
 
       - name: generate-artifacts
         uses: actions/upload-artifact@v4
+        if: always()
+        # always() → upload even if tests failed
         with:
-          name: build-artifacts
-          path: |
-                target/*.jar
-                target/*.war
+          name: test-results-java${{ matrix.java }}
+          # Name includes java version — prevents artifact overwrite
+          path: target/surefire-reports/
+          retention-days: 7
+
+      - name: Report Java version used
+        run: |
+          echo "Java version in use:"
+          java -version
+          echo "Matrix value: ${{ matrix.java }}"
